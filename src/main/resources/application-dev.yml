@@ -1,0 +1,83 @@
+# 모든 비밀값은 환경변수(.env)로 주입합니다. 기본값에 실제 비밀번호/키를 넣지 마세요.
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
+            redirect-uri: "${APP_BASE_URL:http://localhost:8080}/login/oauth2/code/kakao"
+            authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_post
+            scope:
+              - profile_nickname
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/app?serverTimezone=Asia/Seoul&characterEncoding=UTF-8}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 3
+      connection-timeout: 20000
+      idle-timeout: 300000
+      max-lifetime: 600000
+
+  jpa:
+    hibernate:
+      # 처음 배포할 때는 JPA_DDL_AUTO=update 로 테이블을 만든 뒤 validate 로 되돌리세요.
+      ddl-auto: ${JPA_DDL_AUTO:validate}
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: false
+        jdbc:
+          time_zone: Asia/Seoul
+    open-in-view: false
+
+  jackson:
+    time-zone: Asia/Seoul
+
+server:
+  port: ${SERVER_PORT:8080}
+  forward-headers-strategy: framework
+
+jwt:
+  secret: ${JWT_SECRET}
+  access-token-expiration: ${JWT_ACCESS_TOKEN_EXPIRATION:86400000}
+  refresh-token-expiration: ${JWT_REFRESH_TOKEN_EXPIRATION:1209600000}
+  issuer: ${JWT_ISSUER:auth-backend}
+  cookie-domain: ${JWT_COOKIE_DOMAIN:}
+
+oauth2:
+  redirect-uri: ${OAUTH2_FRONT_REDIRECT_URI:http://localhost:3000/oauth/callback}
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
+
+swagger:
+  username: ${SWAGGER_USERNAME}
+  password: ${SWAGGER_PASSWORD}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    display-request-duration: true
+    doc-expansion: none
+
+logging:
+  level:
+    org.hibernate.SQL: ${LOG_LEVEL_SQL:info}
+    org.springframework.security: ${LOG_LEVEL_SECURITY:info}

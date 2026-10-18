@@ -1,0 +1,27 @@
+# Gradle / build
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# 환경변수 (비밀값) - 절대 커밋 금지
+.env
+*.env
+!.env.example
+
+*.log
+hs_err_pid*
+
+# Terraform (state/tfvars 에 비밀값 포함)
+terraform/
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+tfplan
