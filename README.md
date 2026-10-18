@@ -40,7 +40,7 @@ src/main/java/.../
 deploy/
 ├── docker-compose.yml          EC2에서 실행 (app + nginx)
 └── nginx/default.conf.template HTTPS 리버스 프록시
-.github/workflows/deploy.yml    main 푸시 → Docker Hub → EC2 배포
+.github/workflows/deploy.yml    main 푸시 → GHCR → EC2 배포
 .env.example                    EC2 서버 환경변수 예시
 ```
 
@@ -61,7 +61,7 @@ export DB_USERNAME=root DB_PASSWORD=... JWT_SECRET=$(openssl rand -base64 48) \
 
 ```
 main 푸시 → GitHub Actions
-  1) Docker 이미지 빌드 → Docker Hub 푸시
+  1) Docker 이미지 빌드 → GHCR(ghcr.io) 푸시
   2) deploy/ 파일을 EC2 ~/app 으로 복사 (scp)
   3) EC2에서 docker compose pull && up -d → 헬스체크
 ```
@@ -147,13 +147,13 @@ sudo crontab -e
 
 | 이름 | 값 |
 |---|---|
-| `DOCKERHUB_USERNAME` | Docker Hub 아이디 |
-| `DOCKERHUB_TOKEN` | Docker Hub Access Token (Account settings → Personal access tokens) |
 | `EC2_HOST` | EC2 탄력적 IP 또는 도메인 |
 | `EC2_USER` | `ubuntu` (Amazon Linux면 `ec2-user`) |
-| `EC2_SSH_KEY` | EC2 키페어 `.pem` 파일 전체 내용 |
+| `EC2_SSH_KEY` | EC2 SSH 개인키 전체 내용 (Terraform 사용 시 `pbcopy < ~/.ssh/auth-backend`) |
 
-> Docker Hub 저장소를 **Private**으로 만들었다면 EC2에서 한 번 `docker login` 해 두세요.
+> 이미지는 GHCR(`ghcr.io/<owner>/<repo>`, 소문자)에 올라갑니다. 워크플로우의 `GITHUB_TOKEN`으로 푸시하고,
+> 배포 때 EC2에서도 같은 토큰으로 잠깐 로그인해 pull 하므로 별도 레지스트리 계정/토큰이 필요 없습니다.
+> EC2의 `~/app/.env` 에 `APP_IMAGE=ghcr.io/<owner>/<repo>` 를 넣어 두세요 (수동 `docker compose` 실행용).
 
 ### 4. 배포
 
@@ -170,7 +170,7 @@ sudo crontab -e
 ## 원본 대비 변경점
 
 - 주점/메뉴/푸드트럭/동아리/투표 기능과 관련 ErrorCode, 보안 예외 경로 제거
-- 배포: ECS(ECR + Task Definition) → EC2(Docker Hub + SSH + Docker Compose + Nginx)
+- 배포: ECS(ECR + Task Definition) → EC2(GHCR + SSH + Docker Compose + Nginx)
 - 설정 파일의 비밀값 기본값(DB 비밀번호, 카카오 시크릿, Swagger 비밀번호) 제거 → 전부 환경변수
 - CORS 허용 도메인을 `*`에서 `CORS_ALLOWED_ORIGINS` 환경변수로 변경 (쿠키 사용 시 와일드카드는 위험)
 - 원본 저장소에서 누락돼 있던 `gradle-wrapper.jar` 복구, `.gitignore`에 `build/`, `.gradle/`, `.idea/`, `.env` 추가
