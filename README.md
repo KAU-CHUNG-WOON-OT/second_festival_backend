@@ -19,6 +19,9 @@
 | GET | `/oauth2/authorization/kakao` | 카카오 로그인 시작 | - |
 | GET | `/api/users/me` | 내 정보 조회 | ✅ |
 | POST | `/api/users/me/profile` | 카카오 로그인 후 추가 정보(학번/학과/이메일) 등록 | ✅ |
+| POST | `/api/game/records` | 꼬맨틀 정답 기록 (유저당 1회, 재요청 시 기존 기록 반환) + 내 순위 | ✅ |
+| GET | `/api/game/records/me` | 내 정답 여부/순위 조회 | ✅ |
+| GET | `/api/game/rankings` | 먼저 맞춘 TOP 10 랭킹 | ✅ |
 | GET | `/api/v1/health` | 헬스체크 | - |
 | GET | `/swagger-ui.html` | API 문서 (Swagger 계정 필요) | Basic |
 
@@ -29,14 +32,14 @@
 ```
 src/main/java/.../
 ├── config/        Cors, JpaAuditing, Swagger
-├── controller/    Health, auth/, user/
-├── domain/        auth(RefreshToken), user(User, Role, SocialType, StudentType), common
+├── controller/    Health, auth/, user/, game/
+├── domain/        auth(RefreshToken), user(User, Role, SocialType, StudentType), game(GameRecord), common
 ├── dto/           auth, oauth(Kakao), user
 ├── exception/     ErrorCode, GlobalExceptionHandler ...
-├── repository/    auth, user
+├── repository/    auth, user, game
 ├── response/      ApiResponse, ErrorResponse
 ├── security/      SecurityConfig, jwt/, oauth/, auth/
-└── service/       auth, user
+└── service/       auth, user, game
 deploy/
 ├── docker-compose.yml          EC2에서 실행 (app + nginx)
 └── nginx/default.conf.template HTTPS 리버스 프록시

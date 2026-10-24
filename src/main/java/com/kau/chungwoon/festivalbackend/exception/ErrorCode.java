@@ -10,6 +10,7 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER-404", "사용자를 찾을 수 없습니다."),
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "AUTH-404", "리프레시 토큰을 찾을 수 없습니다."),
     DUPLICATE_STUDENT_ID(HttpStatus.CONFLICT, "USER-409", "이미 가입된 학번입니다."),
+    GAME_ALREADY_RECORDED(HttpStatus.CONFLICT, "GAME-409", "이미 정답 기록이 있습니다."),
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "AUTH-401", "학번 또는 비밀번호가 올바르지 않습니다."),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH-402", "유효하지 않은 토큰입니다."),
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH-403", "만료된 토큰입니다."),
