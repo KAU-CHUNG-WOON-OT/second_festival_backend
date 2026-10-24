@@ -10,6 +10,9 @@ public record RankingResponse(
         @Schema(description = "표시 이름 (마스킹)", example = "홍*동")
         String displayName,
 
+        @Schema(description = "학번 (마스킹)", example = "2023****56")
+        String studentId,
+
         @Schema(description = "학과", example = "항공우주및기계공학부")
         String department,
 

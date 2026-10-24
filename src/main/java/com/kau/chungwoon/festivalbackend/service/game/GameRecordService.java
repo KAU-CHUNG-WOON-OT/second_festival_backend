@@ -80,7 +80,7 @@ public class GameRecordService {
     private RankingResponse toRanking(long rank, GameRecord gameRecord) {
         User user = gameRecord.getUser();
         String displayName = user.getName() != null ? maskName(user.getName()) : user.getNickname();
-        return new RankingResponse(rank, displayName, user.getDepartment(), gameRecord.getCreatedAt());
+        return new RankingResponse(rank, displayName, maskStudentId(user.getStudentId()), user.getDepartment(), gameRecord.getCreatedAt());
     }
 
     private String maskName(String name) {
@@ -91,5 +91,13 @@ public class GameRecordService {
             return name.charAt(0) + "*";
         }
         return name.charAt(0) + "*".repeat(name.length() - 2) + name.charAt(name.length() - 1);
+    }
+
+    // 2023123456 -> 2023****56 (카카오 로그인 후 추가 정보 미등록 유저는 null)
+    private String maskStudentId(String studentId) {
+        if (studentId == null || studentId.length() <= 6) {
+            return studentId;
+        }
+        return studentId.substring(0, 4) + "*".repeat(studentId.length() - 6) + studentId.substring(studentId.length() - 2);
     }
 }
